@@ -700,3 +700,30 @@ def train(args):
     if args.filter_adam_var:
         adam_filter(args.output_dir)
 
+if __name__=='__main__':
+    import os
+    from bert_base.train.train_helper import get_args_parser
+    from bert_base.train.bert_lstm_ner import train
+
+    args = get_args_parser()
+    if True:
+        import sys
+
+        param_str = '\n'.join(['%20s = %s' % (k, v) for k, v in sorted(vars(args).items())])
+        print('usage: %s\n%20s   %s\n%s\n%s\n' % (' '.join(sys.argv), 'ARG', 'VALUE', '_' * 50, param_str))
+    # print(args)
+    os.environ['CUDA_VISIBLE_DEVICES'] = args.device_map
+    args.task_name="NER"
+    args.do_train=True
+    args.do_eval=True
+    args.do_predict=True
+    args.data_dir="/home/idm/dzt/kaola-ner/data_demo"
+    args.vocab_file="/home/idm/dzt/kaola-ner/chinese_L-12_H-768_A-12/vocab.txt"
+    args.bert_config_file="/home/idm/dzt/kaola-ner/chinese_L-12_H-768_A-12/bert_config.json"
+    args.init_checkpoint="/home/idm/dzt/kaola-ner/chinese_L-12_H-768_A-12/bert_model.ckpt"
+    args.max_seq_length=128
+    args.train_batch_size=32
+    args.learning_rate=2e-5
+    args.num_train_epochs=3.0
+    args.output_dir="/home/idm/dzt/kaola-ner/output"
+    train(args=args)
